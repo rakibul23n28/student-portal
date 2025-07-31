@@ -27,7 +27,7 @@ export default function CommunityPage() {
       avatar: "SW",
       uploads: 45,
       downloads: 2340,
-      rating: 4.9,
+      rating: 4.8,
       badge: "Top Contributor",
       specialties: ["DSA", "Mathematics"],
       joinDate: "Fall 2023",
