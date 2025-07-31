@@ -14,7 +14,6 @@ import {
   X,
   Download,
   Trash2,
-  Star,
   TrendingUp,
 } from "lucide-react";
 import { useState, useMemo } from "react";
