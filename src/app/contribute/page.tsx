@@ -6,8 +6,15 @@ import {
   StickyNote,
   CheckCircle2,
   HelpCircle,
+  Plus,
   X,
+  Calendar,
+  User,
+  Tag,
   AlertCircle,
+  Award,
+  TrendingUp,
+  Sparkles,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -59,24 +66,21 @@ export default function ContributePage() {
       label: "Notes",
       icon: StickyNote,
       description: "Study notes, lecture summaries, concept explanations",
-    },
-    {
-      id: "assignment",
-      label: "Assignments",
-      icon: FileText,
-      description: "Assignment solutions, project work, homework",
+      color: "from-contribute-primary to-chart-4",
     },
     {
       id: "answer",
       label: "Answers",
       icon: CheckCircle2,
       description: "Exam solutions, answer keys, worked examples",
+      color: "from-contribute-accent to-success",
     },
     {
       id: "question",
       label: "Questions",
       icon: HelpCircle,
       description: "Practice problems, quiz questions, mock tests",
+      color: "from-success to-contribute-primary",
     },
   ];
 
@@ -170,11 +174,11 @@ export default function ContributePage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "approved":
-        return "text-green-600";
+        return "text-success";
       case "pending":
-        return "text-yellow-600";
+        return "text-warning";
       case "rejected":
-        return "text-red-600";
+        return "text-destructive";
       default:
         return "text-muted-foreground";
     }
@@ -183,42 +187,53 @@ export default function ContributePage() {
   const getStatusBg = (status: string) => {
     switch (status) {
       case "approved":
-        return "bg-green-100 dark:bg-green-900";
+        return "bg-success/10 border-success/20";
       case "pending":
-        return "bg-yellow-100 dark:bg-yellow-900";
+        return "bg-warning/10 border-warning/20";
       case "rejected":
-        return "bg-red-100 dark:bg-red-900";
+        return "bg-destructive/10 border-destructive/20";
       default:
-        return "bg-gray-100 dark:bg-gray-900";
+        return "bg-muted/10 border-border";
     }
   };
 
   return (
     <StudentLayout>
-      <div className="flex-1 p-6 bg-background">
+      <div className="flex-1 p-6 bg-gradient-to-br from-background to-contribute-accent/10 min-h-screen">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-2xl mb-2">Contribute Materials</h1>
-          <p className="text-muted-foreground">
-            Share your study materials to help fellow students succeed
+        <div className="mb-8 text-center">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="p-3 bg-gradient-to-r from-contribute-primary to-chart-4 rounded-2xl">
+              <Upload className="h-8 w-8 text-white" />
+            </div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-contribute-primary to-chart-4 bg-clip-text text-transparent">
+              🌟 Contribute Materials
+            </h1>
+          </div>
+          <p className="text-muted-foreground text-lg">
+            Share your knowledge and help fellow students succeed in their
+            academic journey
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Upload Form */}
           <div className="lg:col-span-2">
-            <div className="border border-border rounded-lg bg-card p-6">
-              <h2 className="text-lg font-semibold mb-4">
-                Upload New Material
-              </h2>
+            <div className="border border-contribute-border rounded-2xl bg-gradient-to-br from-card to-contribute-muted/20 p-8 shadow-xl">
+              <div className="flex items-center gap-3 mb-6">
+                <Sparkles className="h-6 w-6 text-contribute-primary" />
+                <h2 className="text-xl font-bold text-contribute-primary">
+                  Upload New Material
+                </h2>
+              </div>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-8">
                 {/* Content Type Selection */}
                 <div>
-                  <label className="block text-sm font-medium mb-3">
+                  <label className="block text-sm font-medium mb-4 text-contribute-primary">
                     Content Type
                   </label>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-4">
                     {contentTypes.map((type) => {
                       const Icon = type.icon;
                       return (
@@ -231,19 +246,34 @@ export default function ContributePage() {
                               type: type.id,
                             }))
                           }
-                          className={`p-4 border rounded-lg text-left transition-all ${
+                          className={`group relative overflow-hidden p-6 border-2 rounded-xl text-left transition-all transform hover:scale-105 ${
                             uploadForm.type === type.id
-                              ? "border-primary bg-primary/5"
-                              : "border-border hover:border-primary/50"
+                              ? "border-contribute-primary bg-gradient-to-r from-contribute-muted to-contribute-accent/30 shadow-lg"
+                              : "border-contribute-border hover:border-contribute-primary/50 bg-card"
                           }`}
                         >
-                          <div className="flex items-center gap-3 mb-2">
-                            <Icon className="h-5 w-5 text-primary" />
-                            <span className="font-medium">{type.label}</span>
+                          <div
+                            className="absolute inset-0 bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity"
+                            style={{
+                              background: `linear-gradient(135deg, var(--contribute-primary), var(--chart-4))`,
+                              opacity: "0.05",
+                            }}
+                          />
+                          <div className="relative">
+                            <div className="flex items-center gap-3 mb-3">
+                              <div
+                                className={`p-2 rounded-lg bg-gradient-to-r ${type.color}`}
+                              >
+                                <Icon className="h-5 w-5 text-white" />
+                              </div>
+                              <span className="font-semibold text-contribute-primary">
+                                {type.label}
+                              </span>
+                            </div>
+                            <p className="text-sm text-muted-foreground leading-relaxed">
+                              {type.description}
+                            </p>
                           </div>
-                          <p className="text-xs text-muted-foreground">
-                            {type.description}
-                          </p>
                         </button>
                       );
                     })}
@@ -252,7 +282,7 @@ export default function ContributePage() {
 
                 {/* Title */}
                 <div>
-                  <label className="block text-sm font-medium mb-2">
+                  <label className="block text-sm font-medium mb-3 text-contribute-primary">
                     Title *
                   </label>
                   <input
@@ -266,13 +296,13 @@ export default function ContributePage() {
                       }))
                     }
                     placeholder="Enter a descriptive title for your material"
-                    className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                    className="w-full px-4 py-3 border border-contribute-border rounded-xl bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-contribute-primary shadow-sm"
                   />
                 </div>
 
                 {/* Description */}
                 <div>
-                  <label className="block text-sm font-medium mb-2">
+                  <label className="block text-sm font-medium mb-3 text-contribute-primary">
                     Description
                   </label>
                   <textarea
@@ -284,15 +314,15 @@ export default function ContributePage() {
                       }))
                     }
                     placeholder="Provide a detailed description of the content, topics covered, etc."
-                    rows={3}
-                    className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                    rows={4}
+                    className="w-full px-4 py-3 border border-contribute-border rounded-xl bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-contribute-primary shadow-sm"
                   />
                 </div>
 
                 {/* Course and Semester */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium mb-2">
+                    <label className="block text-sm font-medium mb-3 text-contribute-primary">
                       Course *
                     </label>
                     <select
@@ -304,7 +334,7 @@ export default function ContributePage() {
                           course: e.target.value,
                         }))
                       }
-                      className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                      className="w-full px-4 py-3 border border-contribute-border rounded-xl bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-contribute-primary shadow-sm"
                     >
                       {courseOptions.map((course) => (
                         <option key={course.id} value={course.id}>
@@ -314,7 +344,7 @@ export default function ContributePage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-2">
+                    <label className="block text-sm font-medium mb-3 text-contribute-primary">
                       Semester
                     </label>
                     <select
@@ -325,7 +355,7 @@ export default function ContributePage() {
                           semester: e.target.value,
                         }))
                       }
-                      className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                      className="w-full px-4 py-3 border border-contribute-border rounded-xl bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-contribute-primary shadow-sm"
                     >
                       {semesterOptions.map((semester) => (
                         <option key={semester.id} value={semester.id}>
@@ -338,7 +368,9 @@ export default function ContributePage() {
 
                 {/* Tags */}
                 <div>
-                  <label className="block text-sm font-medium mb-2">Tags</label>
+                  <label className="block text-sm font-medium mb-3 text-contribute-primary">
+                    Tags
+                  </label>
                   <input
                     type="text"
                     value={uploadForm.tags}
@@ -349,25 +381,25 @@ export default function ContributePage() {
                       }))
                     }
                     placeholder="Enter tags separated by commas (e.g., arrays, complexity, sorting)"
-                    className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                    className="w-full px-4 py-3 border border-contribute-border rounded-xl bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-contribute-primary shadow-sm"
                   />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Tags help other students find your material
+                  <p className="text-sm text-muted-foreground mt-2">
+                    💡 Tags help other students find your material
                   </p>
                 </div>
 
                 {/* File Upload */}
                 <div>
-                  <label className="block text-sm font-medium mb-2">
+                  <label className="block text-sm font-medium mb-3 text-contribute-primary">
                     Upload File *
                   </label>
                   <div
-                    className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+                    className={`relative border-2 border-dashed rounded-2xl p-12 text-center transition-all ${
                       dragActive
-                        ? "border-primary bg-primary/5"
+                        ? "border-contribute-primary bg-contribute-muted/20 shadow-lg"
                         : uploadForm.file
-                        ? "border-green-500 bg-green-50 dark:bg-green-900/20"
-                        : "border-border hover:border-primary/50"
+                        ? "border-success bg-success/10 shadow-md"
+                        : "border-contribute-border hover:border-contribute-primary/50 bg-contribute-muted/10"
                     }`}
                     onDragEnter={handleDrag}
                     onDragLeave={handleDrag}
@@ -382,10 +414,12 @@ export default function ContributePage() {
                     />
 
                     {uploadForm.file ? (
-                      <div className="flex items-center justify-center gap-3">
-                        <FileText className="h-8 w-8 text-green-500" />
-                        <div>
-                          <p className="font-medium text-green-700 dark:text-green-300">
+                      <div className="flex items-center justify-center gap-4">
+                        <div className="p-3 bg-gradient-to-r from-success to-chart-4 rounded-2xl">
+                          <FileText className="h-8 w-8 text-white" />
+                        </div>
+                        <div className="text-left">
+                          <p className="font-semibold text-success text-lg">
                             {uploadForm.file.name}
                           </p>
                           <p className="text-sm text-muted-foreground">
@@ -397,19 +431,21 @@ export default function ContributePage() {
                           onClick={() =>
                             setUploadForm((prev) => ({ ...prev, file: null }))
                           }
-                          className="p-1 hover:bg-red-100 dark:hover:bg-red-900 rounded-full"
+                          className="p-2 hover:bg-destructive/10 rounded-full transition-colors"
                         >
-                          <X className="h-4 w-4 text-red-500" />
+                          <X className="h-5 w-5 text-destructive" />
                         </button>
                       </div>
                     ) : (
                       <div>
-                        <Upload className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                        <p className="text-muted-foreground">
+                        <div className="p-4 bg-gradient-to-r from-contribute-primary to-chart-4 rounded-2xl w-fit mx-auto mb-4">
+                          <Upload className="h-8 w-8 text-white" />
+                        </div>
+                        <p className="text-contribute-primary font-medium text-lg mb-2">
                           Drop your file here or click to browse
                         </p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Supports PDF, DOC, DOCX, TXT files
+                        <p className="text-sm text-muted-foreground">
+                          Supports PDF, DOC, DOCX, TXT files up to 10MB
                         </p>
                       </div>
                     )}
@@ -417,21 +453,21 @@ export default function ContributePage() {
                 </div>
 
                 {/* Submit Button */}
-                <div className="flex gap-4">
+                <div>
                   <button
                     type="submit"
                     disabled={uploadStatus === "uploading"}
-                    className="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                    className="w-full px-6 py-4 bg-gradient-to-r from-contribute-primary to-chart-4 text-white rounded-xl hover:shadow-lg transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-3 font-semibold text-lg"
                   >
                     {uploadStatus === "uploading" ? (
                       <>
-                        <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
-                        Uploading...
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        Uploading your material...
                       </>
                     ) : (
                       <>
-                        <Upload className="h-4 w-4" />
-                        Share Material
+                        <Upload className="h-5 w-5" />
+                        🚀 Share Material with Community
                       </>
                     )}
                   </button>
@@ -439,23 +475,23 @@ export default function ContributePage() {
 
                 {/* Status Messages */}
                 {uploadStatus === "success" && (
-                  <div className="p-3 bg-green-100 dark:bg-green-900 border border-green-300 dark:border-green-700 rounded-md">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-green-600" />
-                      <p className="text-sm text-green-700 dark:text-green-300">
-                        Material uploaded successfully! It will be reviewed and
-                        published shortly.
+                  <div className="p-4 bg-gradient-to-r from-success/10 to-chart-4/10 border border-success/20 rounded-xl">
+                    <div className="flex items-center gap-3">
+                      <CheckCircle2 className="h-5 w-5 text-success" />
+                      <p className="text-success font-medium">
+                        🎉 Material uploaded successfully! It will be reviewed
+                        and published shortly.
                       </p>
                     </div>
                   </div>
                 )}
 
                 {uploadStatus === "error" && (
-                  <div className="p-3 bg-red-100 dark:bg-red-900 border border-red-300 dark:border-red-700 rounded-md">
-                    <div className="flex items-center gap-2">
-                      <AlertCircle className="h-4 w-4 text-red-600" />
-                      <p className="text-sm text-red-700 dark:text-red-300">
-                        Please fill in all required fields and select a file.
+                  <div className="p-4 bg-gradient-to-r from-destructive/10 to-chart-3/10 border border-destructive/20 rounded-xl">
+                    <div className="flex items-center gap-3">
+                      <AlertCircle className="h-5 w-5 text-destructive" />
+                      <p className="text-destructive font-medium">
+                        ⚠️ Please fill in all required fields and select a file.
                       </p>
                     </div>
                   </div>
@@ -465,60 +501,75 @@ export default function ContributePage() {
           </div>
 
           {/* Sidebar - Recent Uploads & Guidelines */}
-          <div className="space-y-6">
+          <div className="space-y-8">
             {/* Upload Guidelines */}
-            <div className="border border-border rounded-lg bg-card p-6">
-              <h3 className="text-lg font-semibold mb-4">Guidelines</h3>
-              <div className="space-y-3 text-sm">
-                <div className="flex items-start gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5" />
+            <div className="border border-contribute-border rounded-2xl bg-gradient-to-br from-card to-contribute-muted/20 p-6 shadow-lg">
+              <div className="flex items-center gap-3 mb-6">
+                <Award className="h-6 w-6 text-contribute-primary" />
+                <h3 className="text-lg font-bold text-contribute-primary">
+                  📋 Guidelines
+                </h3>
+              </div>
+              <div className="space-y-4 text-sm">
+                <div className="flex items-start gap-3 p-3 bg-contribute-muted/20 rounded-lg">
+                  <CheckCircle2 className="h-5 w-5 text-success mt-0.5" />
                   <span>Ensure content is original or properly credited</span>
                 </div>
-                <div className="flex items-start gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5" />
+                <div className="flex items-start gap-3 p-3 bg-contribute-muted/20 rounded-lg">
+                  <CheckCircle2 className="h-5 w-5 text-success mt-0.5" />
                   <span>Use clear, descriptive titles and descriptions</span>
                 </div>
-                <div className="flex items-start gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5" />
+                <div className="flex items-start gap-3 p-3 bg-contribute-muted/20 rounded-lg">
+                  <CheckCircle2 className="h-5 w-5 text-success mt-0.5" />
                   <span>Add relevant tags for better discoverability</span>
                 </div>
-                <div className="flex items-start gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5" />
+                <div className="flex items-start gap-3 p-3 bg-contribute-muted/20 rounded-lg">
+                  <CheckCircle2 className="h-5 w-5 text-success mt-0.5" />
                   <span>Files should be well-formatted and readable</span>
                 </div>
-                <div className="flex items-start gap-2">
-                  <AlertCircle className="h-4 w-4 text-yellow-500 mt-0.5" />
+                <div className="flex items-start gap-3 p-3 bg-warning/10 rounded-lg border border-warning/20">
+                  <AlertCircle className="h-5 w-5 text-warning mt-0.5" />
                   <span>All uploads are reviewed before publication</span>
                 </div>
               </div>
             </div>
 
             {/* Recent Uploads */}
-            <div className="border border-border rounded-lg bg-card p-6">
-              <h3 className="text-lg font-semibold mb-4">
-                Your Recent Uploads
-              </h3>
-              <div className="space-y-3">
+            <div className="border border-contribute-border rounded-2xl bg-gradient-to-br from-card to-contribute-muted/20 p-6 shadow-lg">
+              <div className="flex items-center gap-3 mb-6">
+                <TrendingUp className="h-6 w-6 text-contribute-primary" />
+                <h3 className="text-lg font-bold text-contribute-primary">
+                  📈 Your Recent Uploads
+                </h3>
+              </div>
+              <div className="space-y-4">
                 {recentUploads.map((upload) => (
                   <div
                     key={upload.id}
-                    className="p-3 bg-secondary/30 rounded-lg"
+                    className={`p-4 rounded-xl border ${getStatusBg(
+                      upload.status
+                    )} transition-all hover:shadow-md`}
                   >
-                    <div className="flex items-start justify-between mb-2">
-                      <h4 className="font-medium text-sm">{upload.title}</h4>
+                    <div className="flex items-start justify-between mb-3">
+                      <h4 className="font-semibold text-sm leading-snug">
+                        {upload.title}
+                      </h4>
                       <span
-                        className={`px-2 py-0.5 text-xs rounded ${getStatusBg(
+                        className={`px-3 py-1 text-xs rounded-full font-medium ${getStatusColor(
                           upload.status
-                        )} ${getStatusColor(upload.status)}`}
+                        )} bg-card shadow-sm`}
                       >
                         {upload.status}
                       </span>
                     </div>
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span>
+                      <span className="font-medium">
                         {upload.course} • {upload.type}
                       </span>
-                      <span>{upload.downloads} downloads</span>
+                      <div className="flex items-center gap-1">
+                        <TrendingUp className="h-3 w-3" />
+                        <span>{upload.downloads} downloads</span>
+                      </div>
                     </div>
                   </div>
                 ))}

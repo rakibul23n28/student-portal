@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Bell, Flame, Upload } from "lucide-react";
+import { Bell, Flame, Upload, Clock, User, ExternalLink } from "lucide-react";
 
 type Collab = {
   id: number;
@@ -20,7 +20,7 @@ type Urgent = {
   published: boolean;
 };
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 5;
 
 const collab: Collab[] = [
   {
@@ -142,132 +142,72 @@ export function RightPanel() {
   const totalUrgentPages = Math.ceil(urgent.length / ITEMS_PER_PAGE);
 
   return (
-    <div className="space-y-4 h-screen">
+    <div className="w-full bg-gradient-to-b from-background to-accent/10 border-l border-border p-6 space-y-6 min-h-screen">
       {/* Tabs */}
-      <div className="p-4 border-b border-border">
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setActiveTab("collab")}
-            className={`flex items-center gap-1 px-3 py-1 rounded-md ${
-              activeTab === "collab"
-                ? "bg-neutral-900 text-white"
-                : "hover:bg-secondary"
-            }`}
-          >
-            <Bell className="h-4 w-4" />
-            Collab
-          </button>
-          <button
-            onClick={() => setActiveTab("urgent")}
-            className={`flex items-center gap-1 px-3 py-1 rounded-md ${
-              activeTab === "urgent"
-                ? "bg-neutral-900 text-white"
-                : "hover:bg-secondary"
-            }`}
-          >
-            <Flame className="h-4 w-4" />
-            Urgent
-          </button>
-        </div>
+      <div className="flex items-center gap-2 p-2 bg-gradient-to-r from-secondary/50 to-accent/50 rounded-xl backdrop-blur-sm border border-border shadow-md">
+        <button
+          onClick={() => setActiveTab("collab")}
+          className={`flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-all flex-1 justify-center transform hover:scale-105 ${
+            activeTab === "collab"
+              ? "bg-gradient-to-r from-chart-1 to-chart-2 text-white shadow-lg"
+              : "text-muted-foreground hover:text-foreground hover:bg-accent/30"
+          }`}
+        >
+          <Bell className="h-4 w-4" />
+          Collab
+        </button>
+        <button
+          onClick={() => setActiveTab("urgent")}
+          className={`flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-all flex-1 justify-center transform hover:scale-105 ${
+            activeTab === "urgent"
+              ? "bg-gradient-to-r from-destructive to-chart-3 text-white shadow-lg"
+              : "text-muted-foreground hover:text-foreground hover:bg-accent/30"
+          }`}
+        >
+          <Flame className="h-4 w-4" />
+          Urgent
+        </button>
       </div>
 
       {/* Collab Feed */}
       {activeTab === "collab" && (
-        <div className="border border-border rounded-xl bg-white/60 backdrop-blur-sm shadow-md text-card-foreground">
-          <div className="flex justify-between items-center px-6 pt-6 pb-3">
-            <div className="flex items-center gap-2 text-lg font-semibold text-gray-800">
-              <Bell className="h-5 w-5 text-indigo-500" />
-              Collab Feed
+        <div className=" border border-border rounded-2xl bg-gradient-to-br from-card to-chart-1/5 shadow-lg overflow-hidden">
+          <div className="p-4 border-b border-border bg-gradient-to-r from-chart-1/10 to-chart-2/10">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-gradient-to-r from-chart-1 to-chart-2 rounded-lg">
+                <Bell className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <h3 className="font-bold text-chart-1">🔔 Collab Feed</h3>
+                <p className="text-xs text-muted-foreground">
+                  Latest material requests
+                </p>
+              </div>
             </div>
           </div>
 
-          <div className="px-6 pb-6 pt-0">
-            <div className="h-[450px] overflow-y-auto space-y-4">
-              {paginatedCollab.map((n) => (
+          <div className="p-4">
+            <div className="space-y-3 max-h-[400px] overflow-x-hidden">
+              {paginatedCollab.map((item) => (
                 <div
-                  key={n.id}
-                  className="p-4 rounded-lg bg-indigo-100/40 hover:bg-indigo-100 transition space-y-2"
+                  key={item.id}
+                  className="group relative overflow-hidden p-2 rounded-xl bg-gradient-to-r from-chart-1/5 to-chart-2/5 hover:from-chart-1/10 hover:to-chart-2/10 transition-all transform hover:scale-105 border border-chart-1/20 shadow-sm hover:shadow-md"
                 >
-                  <div className="flex items-start justify-between">
-                    <p className="text-sm font-medium text-gray-900">
-                      {n.title}
-                    </p>
-                    <span className="text-xs text-gray-500">{n.time}</span>
-                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-chart-1/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="relative">
+                    <div className="flex items-start justify-between mb-3">
+                      <p className="text-sm font-medium text-chart-1 group-hover:text-chart-1/90 leading-snug">
+                        {item.title}
+                      </p>
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground bg-card/50 px-2 py-1 rounded-md">
+                        <Clock className="h-3 w-3" />
+                        {item.time}
+                      </div>
+                    </div>
 
-                  <button className="flex items-center gap-1 text-sm text-indigo-600 hover:text-indigo-700 hover:underline font-medium">
-                    <Upload className="h-4 w-4" />
-                    Upload
-                  </button>
-                </div>
-              ))}
-            </div>
-
-            {/* Pagination */}
-            <div className="flex justify-center gap-2 pt-6">
-              {Array.from({ length: totalCollabPages }, (_, i) => i + 1).map(
-                (page) => (
-                  <button
-                    key={page}
-                    onClick={() => setCollabPage(page)}
-                    className={`w-8 h-8 text-sm rounded-full transition ${
-                      page === collabPage
-                        ? "bg-indigo-600 text-white shadow"
-                        : "text-gray-600 hover:bg-gray-200"
-                    }`}
-                  >
-                    {page}
-                  </button>
-                )
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Urgent Feed */}
-      {activeTab === "urgent" && (
-        <div className="border border-border rounded-xl bg-white/60 backdrop-blur-sm shadow-md text-card-foreground">
-          <div className="flex justify-between items-center px-6 pt-6 pb-3">
-            <div className="flex items-center gap-2 text-lg font-semibold text-red-700">
-              <Flame className="h-5 w-5 text-red-600" />
-              Urgent Feed
-              <span className="ml-2 px-2 py-1 text-xs bg-red-100 text-red-800 rounded-md">
-                {urgent.length}
-              </span>
-            </div>
-          </div>
-
-          <div className="px-6 pb-6 pt-0">
-            <div className="h-[450px] overflow-y-auto space-y-4">
-              {paginatedUrgent.map((n) => (
-                <div
-                  key={n.id}
-                  className="p-4 rounded-lg bg-red-100/50 hover:bg-red-100 transition space-y-2"
-                >
-                  <div className="flex items-start justify-between">
-                    <p className="text-sm font-medium text-gray-800">
-                      {n.title}
-                    </p>
-                    <span className="text-xs text-gray-500">{n.time}</span>
-                  </div>
-
-                  <p className="text-xs text-gray-600">
-                    <strong>{n.studentId}:</strong> {n.message}
-                  </p>
-
-                  <div className="flex gap-2 items-center justify-between text-sm">
-                    <a
-                      className="text-red-600 hover:underline"
-                      href={n.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      View the file
-                    </a>
-                    <button className="flex items-center gap-1 text-red-700 hover:text-red-800 hover:underline font-medium">
+                    <button className="flex items-center gap-2 text-sm text-white bg-gradient-to-r from-chart-1 to-chart-2 hover:from-chart-2 hover:to-chart-1 px-3 py-2 rounded-lg font-medium transition-all transform hover:scale-105 shadow-md">
                       <Upload className="h-4 w-4" />
-                      Upload
+                      Upload Material
                     </button>
                   </div>
                 </div>
@@ -275,23 +215,124 @@ export function RightPanel() {
             </div>
 
             {/* Pagination */}
-            <div className="flex justify-center gap-2 pt-6">
-              {Array.from({ length: totalUrgentPages }, (_, i) => i + 1).map(
-                (page) => (
-                  <button
-                    key={page}
-                    onClick={() => setUrgentPage(page)}
-                    className={`w-8 h-8 text-sm rounded-full transition ${
-                      page === urgentPage
-                        ? "bg-red-600 text-white shadow"
-                        : "text-gray-600 hover:bg-gray-200"
-                    }`}
-                  >
-                    {page}
-                  </button>
-                )
-              )}
+            {totalCollabPages > 1 && (
+              <div className="flex justify-center gap-2 mt-6 pt-4 border-t border-border">
+                {Array.from({ length: totalCollabPages }, (_, i) => i + 1).map(
+                  (page) => (
+                    <button
+                      key={page}
+                      onClick={() => setCollabPage(page)}
+                      className={`w-8 h-8 text-sm rounded-lg transition-all transform hover:scale-110 ${
+                        page === collabPage
+                          ? "bg-gradient-to-r from-chart-1 to-chart-2 text-white shadow-md"
+                          : "text-muted-foreground hover:bg-chart-1/10 hover:text-chart-1"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  )
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Urgent Feed */}
+      {activeTab === "urgent" && (
+        <div className="border border-border rounded-2xl bg-gradient-to-br from-card to-destructive/5 shadow-lg overflow-hidden">
+          <div className="p-4 border-b border-border bg-gradient-to-r from-destructive/10 to-chart-3/10">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-gradient-to-r from-destructive to-chart-3 rounded-lg">
+                  <Flame className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-destructive">🔥 Urgent Feed</h3>
+                  <p className="text-xs text-muted-foreground">
+                    Critical material needs
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="px-3 py-1 text-xs bg-gradient-to-r from-destructive to-chart-3 text-white rounded-full font-medium shadow-md">
+                  {urgent.length} active
+                </span>
+              </div>
             </div>
+          </div>
+
+          <div className="p-4">
+            <div className="space-y-3 max-h-[400px] overflow-x-hidden">
+              {paginatedUrgent.map((item) => (
+                <div
+                  key={item.id}
+                  className="group relative overflow-hidden p-2 rounded-xl bg-gradient-to-r from-destructive/5 to-chart-3/5 hover:from-destructive/10 hover:to-chart-3/10 transition-all transform hover:scale-105 border border-destructive/20 shadow-sm hover:shadow-md"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-destructive/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="relative">
+                    <div className="flex items-start justify-between mb-3">
+                      <p className="text-sm font-medium text-destructive group-hover:text-destructive/90 leading-snug">
+                        {item.title}
+                      </p>
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground bg-card/50 px-2 py-1 rounded-md">
+                        <Clock className="h-3 w-3" />
+                        {item.time}
+                      </div>
+                    </div>
+
+                    <div className="mb-4 p-3 bg-card/30 rounded-lg border border-destructive/10">
+                      <div className="flex items-center gap-2 mb-2">
+                        <User className="h-3 w-3 text-destructive" />
+                        <span className="text-xs font-medium text-destructive">
+                          {item.studentId}
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        {item.message}
+                      </p>
+                    </div>
+
+                    <div className="flex gap-2 items-center justify-between">
+                      <a
+                        className="flex items-center gap-1 text-xs text-destructive hover:text-destructive/80 hover:underline font-medium"
+                        href={item.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <ExternalLink className="h-3 w-3" />
+                        View file
+                      </a>
+                      <button className="flex items-center gap-2 text-xs text-white bg-gradient-to-r from-destructive to-chart-3 hover:from-chart-3 hover:to-destructive px-3 py-2 rounded-lg font-medium transition-all transform hover:scale-105 shadow-md">
+                        <Upload className="h-3 w-3" />
+                        Help Out
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Pagination */}
+            {totalUrgentPages > 1 && (
+              <div className="flex justify-center gap-2 mt-6 pt-4 border-t border-border">
+                {Array.from({ length: totalUrgentPages }, (_, i) => i + 1).map(
+                  (page) => (
+                    <button
+                      key={page}
+                      onClick={() => setUrgentPage(page)}
+                      className={`w-8 h-8 text-sm rounded-lg transition-all transform hover:scale-110 ${
+                        page === urgentPage
+                          ? "bg-gradient-to-r from-destructive to-chart-3 text-white shadow-md"
+                          : "text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  )
+                )}
+              </div>
+            )}
           </div>
         </div>
       )}

@@ -5,9 +5,16 @@ import {
   Star,
   TrendingUp,
   Award,
+  MessageSquare,
   ThumbsUp,
   Download,
+  Eye,
+  Calendar,
   Search,
+  Crown,
+  Zap,
+  Heart,
+  Target,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -187,17 +194,17 @@ export default function CommunityPage() {
   const getBadgeColor = (badge: string) => {
     switch (badge) {
       case "Top Contributor":
-        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200";
+        return "bg-gradient-to-r from-community-primary to-chart-5 text-white shadow-lg";
       case "Expert Helper":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200";
+        return "bg-gradient-to-r from-chart-1 to-chart-2 text-white shadow-lg";
       case "Active Member":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
+        return "bg-gradient-to-r from-success to-chart-4 text-white shadow-md";
       case "Rising Star":
-        return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200";
+        return "bg-gradient-to-r from-chart-3 to-final-primary text-white shadow-md";
       case "Helper":
-        return "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200";
+        return "bg-gradient-to-r from-community-accent to-community-primary text-white shadow-sm";
       default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200";
+        return "bg-gradient-to-r from-muted to-secondary text-muted-foreground";
     }
   };
 
@@ -220,48 +227,65 @@ export default function CommunityPage() {
 
   return (
     <StudentLayout>
-      <div className="flex-1 p-6 bg-background">
+      <div className="flex-1 p-6 bg-gradient-to-br from-background to-community-accent/10 min-h-screen">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-2xl mb-2">Community</h1>
-          <p className="text-muted-foreground">
+        <div className="mb-8 text-center">
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <div className="p-4 bg-gradient-to-r from-community-primary to-chart-5 rounded-2xl">
+              <Users className="h-8 w-8 text-white" />
+            </div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-community-primary to-chart-5 bg-clip-text text-transparent">
+              🌟 Community Hub
+            </h1>
+          </div>
+          <p className="text-muted-foreground text-lg">
             Connect with fellow students and celebrate our collaborative
             learning community
           </p>
         </div>
 
         {/* Community Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="p-4 border border-border rounded-lg bg-card text-center">
-            <div className="flex items-center justify-center mb-2">
-              <Users className="h-5 w-5 text-blue-500" />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+          <div className="group p-6 border border-community-border rounded-2xl bg-gradient-to-br from-card to-community-muted/20 text-center shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
+            <div className="flex items-center justify-center mb-3">
+              <div className="p-3 bg-gradient-to-r from-chart-1 to-chart-2 rounded-xl">
+                <Users className="h-6 w-6 text-white" />
+              </div>
             </div>
-            <p className="text-2xl font-bold">
+            <p className="text-2xl font-bold text-chart-1 mb-1">
               {communityStats.totalMembers.toLocaleString()}
             </p>
             <p className="text-sm text-muted-foreground">Total Members</p>
           </div>
-          <div className="p-4 border border-border rounded-lg bg-card text-center">
-            <div className="flex items-center justify-center mb-2">
-              <TrendingUp className="h-5 w-5 text-green-500" />
+          <div className="group p-6 border border-community-border rounded-2xl bg-gradient-to-br from-card to-community-muted/20 text-center shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
+            <div className="flex items-center justify-center mb-3">
+              <div className="p-3 bg-gradient-to-r from-success to-chart-4 rounded-xl">
+                <TrendingUp className="h-6 w-6 text-white" />
+              </div>
             </div>
-            <p className="text-2xl font-bold">{communityStats.activesToday}</p>
+            <p className="text-2xl font-bold text-success mb-1">
+              {communityStats.activesToday}
+            </p>
             <p className="text-sm text-muted-foreground">Active Today</p>
           </div>
-          <div className="p-4 border border-border rounded-lg bg-card text-center">
-            <div className="flex items-center justify-center mb-2">
-              <Award className="h-5 w-5 text-purple-500" />
+          <div className="group p-6 border border-community-border rounded-2xl bg-gradient-to-br from-card to-community-muted/20 text-center shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
+            <div className="flex items-center justify-center mb-3">
+              <div className="p-3 bg-gradient-to-r from-final-primary to-chart-3 rounded-xl">
+                <Award className="h-6 w-6 text-white" />
+              </div>
             </div>
-            <p className="text-2xl font-bold">
+            <p className="text-2xl font-bold text-final-primary mb-1">
               {communityStats.totalUploads.toLocaleString()}
             </p>
             <p className="text-sm text-muted-foreground">Materials Shared</p>
           </div>
-          <div className="p-4 border border-border rounded-lg bg-card text-center">
-            <div className="flex items-center justify-center mb-2">
-              <Download className="h-5 w-5 text-orange-500" />
+          <div className="group p-6 border border-community-border rounded-2xl bg-gradient-to-br from-card to-community-muted/20 text-center shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
+            <div className="flex items-center justify-center mb-3">
+              <div className="p-3 bg-gradient-to-r from-community-primary to-chart-5 rounded-xl">
+                <Download className="h-6 w-6 text-white" />
+              </div>
             </div>
-            <p className="text-2xl font-bold">
+            <p className="text-2xl font-bold text-community-primary mb-1">
               {communityStats.totalDownloads.toLocaleString()}
             </p>
             <p className="text-sm text-muted-foreground">Total Downloads</p>
@@ -269,65 +293,77 @@ export default function CommunityPage() {
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex space-x-1 mb-6 bg-secondary p-1 rounded-lg w-fit">
+        <div className="flex space-x-2 mb-8 bg-gradient-to-r from-community-muted/30 to-community-accent/30 p-2 rounded-2xl w-fit mx-auto shadow-lg">
           {[
-            { id: "contributors", label: "Top Contributors" },
-            { id: "activity", label: "Recent Activity" },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-2 text-sm rounded-md transition-colors ${
-                activeTab === tab.id
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+            { id: "contributors", label: "🏆 Top Contributors", icon: Crown },
+            { id: "activity", label: "⚡ Recent Activity", icon: Zap },
+          ].map((tab) => {
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-2 px-6 py-3 text-sm rounded-xl font-medium transition-all transform hover:scale-105 ${
+                  activeTab === tab.id
+                    ? "bg-gradient-to-r from-community-primary to-chart-5 text-white shadow-lg"
+                    : "text-muted-foreground hover:text-foreground hover:bg-community-muted/20"
+                }`}
+              >
+                <Icon className="h-4 w-4" />
+                {tab.label}
+              </button>
+            );
+          })}
         </div>
 
         {/* Tab Content */}
         {activeTab === "contributors" && (
           <div>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl">Top Contributors</h2>
-              <div className="relative w-64">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <Crown className="h-6 w-6 text-community-primary" />
+                <h2 className="text-2xl font-bold text-community-primary">
+                  Top Contributors
+                </h2>
+              </div>
+              <div className="relative w-80">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <input
                   type="search"
                   placeholder="Search contributors..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-input rounded-md bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="w-full pl-12 pr-4 py-3 border border-community-border rounded-xl bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-community-primary shadow-sm"
                 />
               </div>
             </div>
 
-            <div className="grid gap-4">
+            <div className="grid gap-6">
               {filteredContributors.map((contributor, index) => (
                 <div
                   key={contributor.id}
-                  className="border border-border rounded-lg bg-card p-6 hover:bg-accent/20 transition-colors"
+                  className="group border border-community-border rounded-2xl bg-gradient-to-br from-card to-community-muted/20 p-8 hover:shadow-xl transition-all transform hover:scale-105 relative overflow-hidden"
                 >
-                  <div className="flex items-start gap-4">
+                  <div className="absolute inset-0 bg-gradient-to-r from-community-primary/5 to-chart-5/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="relative flex items-start gap-6">
                     <div className="relative">
-                      <div className="w-12 h-12 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold">
+                      <div className="w-16 h-16 bg-gradient-to-r from-community-primary to-chart-5 text-white rounded-2xl flex items-center justify-center font-bold text-lg shadow-lg">
                         {contributor.avatar}
                       </div>
                       {index < 3 && (
-                        <div className="absolute -top-1 -right-1 w-6 h-6 bg-yellow-500 text-yellow-50 rounded-full flex items-center justify-center text-xs font-bold">
+                        <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-chart-5 to-community-primary text-white rounded-full flex items-center justify-center text-sm font-bold shadow-lg">
                           {index + 1}
                         </div>
                       )}
                     </div>
 
                     <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="font-semibold">{contributor.name}</h3>
+                      <div className="flex items-center gap-4 mb-4">
+                        <h3 className="text-xl font-bold text-community-primary">
+                          {contributor.name}
+                        </h3>
                         <span
-                          className={`px-2 py-1 text-xs rounded-full ${getBadgeColor(
+                          className={`px-3 py-1 text-sm rounded-full font-medium ${getBadgeColor(
                             contributor.badge
                           )}`}
                         >
@@ -335,48 +371,54 @@ export default function CommunityPage() {
                         </span>
                       </div>
 
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-3">
-                        <div className="text-center">
-                          <p className="text-lg font-bold text-blue-600">
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-4">
+                        <div className="text-center p-3 bg-chart-1/10 rounded-xl">
+                          <p className="text-2xl font-bold text-chart-1 flex items-center justify-center gap-1">
+                            <Target className="h-5 w-5" />
                             {contributor.uploads}
                           </p>
-                          <p className="text-xs text-muted-foreground">
+                          <p className="text-xs text-muted-foreground font-medium">
                             Uploads
                           </p>
                         </div>
-                        <div className="text-center">
-                          <p className="text-lg font-bold text-green-600">
+                        <div className="text-center p-3 bg-success/10 rounded-xl">
+                          <p className="text-2xl font-bold text-success flex items-center justify-center gap-1">
+                            <Download className="h-5 w-5" />
                             {contributor.downloads.toLocaleString()}
                           </p>
-                          <p className="text-xs text-muted-foreground">
+                          <p className="text-xs text-muted-foreground font-medium">
                             Downloads
                           </p>
                         </div>
-                        <div className="text-center">
-                          <p className="text-lg font-bold text-yellow-600 flex items-center justify-center gap-1">
-                            <Star className="h-4 w-4 fill-current" />
+                        <div className="text-center p-3 bg-chart-5/10 rounded-xl">
+                          <p className="text-2xl font-bold text-chart-5 flex items-center justify-center gap-1">
+                            <Star className="h-5 w-5 fill-current" />
                             {contributor.rating}
                           </p>
-                          <p className="text-xs text-muted-foreground">
+                          <p className="text-xs text-muted-foreground font-medium">
                             Rating
                           </p>
                         </div>
-                        <div className="text-center">
-                          <p className="text-lg font-bold text-purple-600">
+                        <div className="text-center p-3 bg-final-primary/10 rounded-xl">
+                          <p className="text-lg font-bold text-final-primary flex items-center justify-center gap-1">
+                            <Calendar className="h-4 w-4" />
                             {contributor.joinDate}
                           </p>
-                          <p className="text-xs text-muted-foreground">
+                          <p className="text-xs text-muted-foreground font-medium">
                             Joined
                           </p>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-4 mb-2">
-                        <div className="flex gap-1">
+                      <div className="flex items-center gap-3 mb-3">
+                        <span className="text-sm font-medium text-community-primary">
+                          Specialties:
+                        </span>
+                        <div className="flex gap-2">
                           {contributor.specialties.map((specialty, i) => (
                             <span
                               key={i}
-                              className="px-2 py-1 text-xs bg-primary/10 text-primary rounded"
+                              className="px-3 py-1 text-xs bg-gradient-to-r from-community-primary/10 to-chart-5/10 text-community-primary rounded-full border border-community-border font-medium"
                             >
                               {specialty}
                             </span>
@@ -384,9 +426,12 @@ export default function CommunityPage() {
                         </div>
                       </div>
 
-                      <p className="text-sm text-muted-foreground">
-                        {contributor.recentActivity}
-                      </p>
+                      <div className="flex items-center gap-2 p-3 bg-community-muted/20 rounded-xl">
+                        <Heart className="h-4 w-4 text-chart-3" />
+                        <p className="text-sm text-muted-foreground">
+                          {contributor.recentActivity}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -397,10 +442,15 @@ export default function CommunityPage() {
 
         {activeTab === "activity" && (
           <div>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl">Recent Activity</h2>
-              <p className="text-sm text-muted-foreground">
-                Live updates from our community
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <Zap className="h-6 w-6 text-community-primary" />
+                <h2 className="text-2xl font-bold text-community-primary">
+                  Recent Activity
+                </h2>
+              </div>
+              <p className="text-sm text-muted-foreground bg-community-muted/20 px-4 py-2 rounded-xl">
+                📡 Live updates from our community
               </p>
             </div>
 
@@ -408,50 +458,59 @@ export default function CommunityPage() {
               {recentActivity.map((activity) => (
                 <div
                   key={activity.id}
-                  className="border border-border rounded-lg bg-card p-4 hover:bg-accent/20 transition-colors"
+                  className="group border border-community-border rounded-2xl bg-gradient-to-br from-card to-community-muted/20 p-6 hover:shadow-lg transition-all transform hover:scale-105 relative overflow-hidden"
                 >
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold">
+                  <div className="absolute inset-0 bg-gradient-to-r from-community-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="relative flex items-start gap-4">
+                    <div className="w-12 h-12 bg-gradient-to-r from-community-primary to-chart-5 text-white rounded-2xl flex items-center justify-center font-bold text-sm shadow-lg">
                       {activity.user
                         .split(" ")
                         .map((n) => n[0])
                         .join("")}
                     </div>
                     <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-lg">
+                      <div className="flex items-center gap-3 mb-2">
+                        <span className="text-2xl">
                           {getActivityIcon(activity.type)}
                         </span>
                         <p className="text-sm">
-                          <span className="font-medium">{activity.user}</span>
+                          <span className="font-semibold text-community-primary">
+                            {activity.user}
+                          </span>
                           <span className="text-muted-foreground">
                             {" "}
                             {activity.action}{" "}
                           </span>
-                          <span className="font-medium">{activity.item}</span>
+                          <span className="font-semibold">{activity.item}</span>
                           {activity.course && (
-                            <span className="text-muted-foreground">
-                              {" "}
-                              in {activity.course}
+                            <span className="text-muted-foreground"> in </span>
+                          )}
+                          {activity.course && (
+                            <span className="px-2 py-1 text-xs bg-gradient-to-r from-community-primary/10 to-chart-5/10 text-community-primary rounded-md font-medium">
+                              {activity.course}
                             </span>
                           )}
                         </p>
                       </div>
-                      <div className="flex items-center gap-4 mt-2">
-                        <span className="text-xs text-muted-foreground">
+                      <div className="flex items-center gap-6 mt-3">
+                        <span className="text-xs text-muted-foreground bg-community-muted/20 px-3 py-1 rounded-full">
                           {activity.time}
                         </span>
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-4">
                           {activity.interactions.likes && (
-                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                              <ThumbsUp className="h-3 w-3" />
-                              <span>{activity.interactions.likes}</span>
+                            <div className="flex items-center gap-2 text-xs text-chart-3 bg-chart-3/10 px-3 py-1 rounded-full">
+                              <ThumbsUp className="h-3 w-3 fill-current" />
+                              <span className="font-medium">
+                                {activity.interactions.likes}
+                              </span>
                             </div>
                           )}
                           {activity.interactions.downloads && (
-                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                            <div className="flex items-center gap-2 text-xs text-success bg-success/10 px-3 py-1 rounded-full">
                               <Download className="h-3 w-3" />
-                              <span>{activity.interactions.downloads}</span>
+                              <span className="font-medium">
+                                {activity.interactions.downloads}
+                              </span>
                             </div>
                           )}
                         </div>
@@ -463,8 +522,8 @@ export default function CommunityPage() {
             </div>
 
             <div className="text-center mt-8">
-              <button className="px-6 py-2 border border-border rounded-md hover:bg-accent transition-colors">
-                Load More Activity
+              <button className="px-8 py-3 border border-community-border rounded-xl hover:bg-gradient-to-r hover:from-community-primary hover:to-chart-5 hover:text-white transition-all font-medium transform hover:scale-105 shadow-md">
+                🔄 Load More Activity
               </button>
             </div>
           </div>

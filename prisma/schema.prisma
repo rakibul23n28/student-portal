@@ -1,0 +1,62 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int      @id @default(autoincrement())
+  email    String   @unique
+  name     String?
+  profile  String?  // e.g. "student", "teacher", "admin"
+  joinedAt DateTime @default(now())
+}
+
+model Course {
+  id               Int          @id @default(autoincrement())
+  name             String
+  code             String       @unique
+  fullName         String
+  currentSemester  String
+  progress         Int
+  semesters        Semester[]   // Relation
+}
+
+model Semester {
+  id        Int       @id @default(autoincrement())
+  name      String    // e.g. "Spring 2025"
+  courseId  Int
+  course    Course    @relation(fields: [courseId], references: [id])
+  contents  Content[]
+  missing   Missing[]
+}
+
+model Content {
+  id          String    @id                 // use original content ID like "dsa1-notes-1"
+  type        String    // "note", "question", "answer"
+  phase       String    // "mid", "final"
+  title       String
+  contributor String
+  downloads   Int
+  previews    Int
+  semester    Semester  @relation(fields: [semesterId], references: [id])
+  semesterId  Int
+  fileUrl     String
+}
+
+model Missing {
+  id          Int       @id @default(autoincrement())
+  key         String    // e.g. "final-note"
+  semesterId  Int
+  semester    Semester  @relation(fields: [semesterId], references: [id])
+}

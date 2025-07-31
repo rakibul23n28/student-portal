@@ -226,9 +226,16 @@ export default function BrowseMaterialsPage() {
     <StudentLayout>
       <div className="flex-1 p-6 bg-background">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-2xl mb-2">Browse Student Resources</h1>
-          <p className="text-muted-foreground">
+        <div className="mb-8 text-center">
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <div className="p-4 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl">
+              <BookOpen className="h-8 w-8 text-white" />
+            </div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
+              📚 Browse Student Resources
+            </h1>
+          </div>
+          <p className="text-muted-foreground text-lg">
             Discover popular websites and tools to enhance your learning
             experience
           </p>

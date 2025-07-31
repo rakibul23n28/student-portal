@@ -14,6 +14,8 @@ import {
   X,
   Download,
   Trash2,
+  Star,
+  TrendingUp,
 } from "lucide-react";
 import { useState, useMemo } from "react";
 
@@ -23,7 +25,7 @@ type ContentType = "note" | "question" | "answer";
 type MaterialContent = {
   id: string;
   type: ContentType;
-  phase?: Phase; // Only used for mid/final classification
+  phase?: Phase;
   title: string;
   contributor: string;
   downloads: number;
@@ -294,10 +296,30 @@ export function MainContent() {
   ]);
 
   const filterOptions = [
-    { id: "all", label: "All", icon: Filter },
-    { id: "note", label: "Notes", icon: StickyNote },
-    { id: "question", label: "Questions", icon: HelpCircle },
-    { id: "answer", label: "Answers", icon: CheckCircle2 },
+    {
+      id: "all",
+      label: "All",
+      icon: Filter,
+      color: "bg-gradient-to-r from-purple-500 to-blue-500",
+    },
+    {
+      id: "note",
+      label: "Notes",
+      icon: StickyNote,
+      color: "bg-gradient-to-r from-green-500 to-emerald-500",
+    },
+    {
+      id: "question",
+      label: "Questions",
+      icon: HelpCircle,
+      color: "bg-gradient-to-r from-orange-500 to-red-500",
+    },
+    {
+      id: "answer",
+      label: "Answers",
+      icon: CheckCircle2,
+      color: "bg-gradient-to-r from-blue-500 to-cyan-500",
+    },
   ];
 
   const semesterOptions = [
@@ -314,7 +336,6 @@ export function MainContent() {
   const filteredCourses = useMemo(() => {
     let filtered = materials;
 
-    // Filter by search query
     if (searchQuery.trim()) {
       const query = searchQuery?.toLowerCase();
       filtered = filtered.filter((course) => {
@@ -347,11 +368,8 @@ export function MainContent() {
     };
 
     const { content, missing } = fullSemester;
-
-    // Normalize filter
     const filter = activeFilter.toLowerCase();
 
-    // Filter logic
     const filteredContent = content.filter((item: any) => {
       const type = item.type.toLowerCase();
       if (filter === "all") return true;
@@ -359,7 +377,7 @@ export function MainContent() {
         return type.startsWith("mid") && type.endsWith(filter.split("-")[1]);
       if (filter.startsWith("final"))
         return type.startsWith("final") && type.endsWith(filter.split("-")[1]);
-      return type.endsWith(filter); // For generic filter like 'note', 'question'
+      return type.endsWith(filter);
     });
 
     const filteredMissing = missing.filter((type: string) => {
@@ -404,7 +422,6 @@ export function MainContent() {
   };
 
   const handlePreview = (material: any) => {
-    // Increment preview count
     setMaterials((prevMaterials) =>
       prevMaterials.map((course) => ({
         ...course,
@@ -460,6 +477,7 @@ export function MainContent() {
       prev.filter((course) => course.courseCode !== courseCode)
     );
   };
+
   const getPDFContent = (material: any) => {
     const contentMap: { [key: string]: string } = {
       "Array Implementation Notes": `
@@ -522,82 +540,6 @@ public:
 };
 \`\`\`
       `,
-      "Hash Table Implementation": `
-# Hash Table Implementation
-
-## Overview
-Hash tables provide average O(1) time complexity for insertion, deletion, and lookup operations.
-
-## Implementation Details
-
-### Hash Function
-A good hash function should:
-- Be deterministic
-- Distribute keys uniformly
-- Be fast to compute
-
-### Collision Resolution
-1. **Chaining**: Store multiple values in linked lists
-2. **Open Addressing**: Find alternative slots
-
-### Code Example
-\`\`\`cpp
-class HashTable {
-private:
-    vector<list<pair<int, int>>> table;
-    int size;
-    
-    int hash(int key) {
-        return key % size;
-    }
-    
-public:
-    HashTable(int s) : size(s) {
-        table.resize(size);
-    }
-    
-    void insert(int key, int value) {
-        int index = hash(key);
-        table[index].push_back({key, value});
-    }
-};
-\`\`\`
-      `,
-      "Proof Techniques and Logic": `
-# Proof Techniques and Logic
-
-## Types of Proofs
-
-### 1. Direct Proof
-- Start with hypothesis
-- Use logical steps
-- Arrive at conclusion
-
-### 2. Proof by Contradiction
-- Assume negation of conclusion
-- Derive contradiction
-- Original statement must be true
-
-### 3. Mathematical Induction
-- Base case
-- Inductive step
-- Conclusion
-
-## Logical Operators
-- AND (∧)
-- OR (∨)  
-- NOT (¬)
-- IMPLIES (→)
-- IF AND ONLY IF (↔)
-
-## Example Proof
-**Theorem**: The sum of two even integers is even.
-
-**Proof**: Let a and b be even integers.
-Then a = 2k and b = 2m for some integers k, m.
-Therefore: a + b = 2k + 2m = 2(k + m)
-Since (k + m) is an integer, a + b is even. ∎
-      `,
       default: `
 # Study Material
 
@@ -629,35 +571,45 @@ Download the full PDF to access all content and detailed explanations.
   };
 
   return (
-    <div className="p-6 bg-background">
+    <div className="flex-1 p-6 bg-gradient-to-br from-background to-accent/20 min-h-screen">
       {/* Header with Search */}
       <div className="mb-8">
-        <div className="space-y-4">
+        <div className="space-y-6">
+          {/* Welcome Header */}
+          <div className="text-center py-6">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-chart-1 bg-clip-text text-transparent mb-2">
+              Course Materials Dashboard
+            </h1>
+            <p className="text-muted-foreground">
+              Find, share, and collaborate on study materials
+            </p>
+          </div>
+
           {/* Search Bar */}
-          <div className="relative w-full max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <div className="relative w-full max-w-2xl mx-auto">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <input
               type="search"
               placeholder="Search courses, materials, contributors..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-input rounded-md bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              className="w-full pl-12 pr-4 py-3 border border-input rounded-xl bg-card/80 backdrop-blur-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary shadow-lg"
             />
           </div>
 
           {/* Filters and Semester Selection */}
-          <div className="flex flex-wrap gap-4 items-center">
-            <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-4 items-center justify-center">
+            <div className="flex flex-wrap gap-3">
               {filterOptions.map((filter) => {
                 const Icon = filter.icon;
                 return (
                   <button
                     key={filter.id}
                     onClick={() => setActiveFilter(filter.id)}
-                    className={`flex items-center gap-2 px-3 py-1.5 text-sm rounded-md transition-colors ${
+                    className={`flex items-center gap-2 px-4 py-2 text-sm rounded-xl transition-all transform hover:scale-105 shadow-md ${
                       activeFilter === filter.id
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                        ? `${filter.color} text-white shadow-lg`
+                        : "bg-card text-card-foreground hover:bg-accent/50 border border-border"
                     }`}
                   >
                     <Icon className="h-4 w-4" />
@@ -667,12 +619,14 @@ Download the full PDF to access all content and detailed explanations.
               })}
             </div>
 
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Semester:</span>
+            <div className="flex items-center gap-3 bg-card/80 backdrop-blur-sm rounded-xl px-4 py-2 shadow-md border border-border">
+              <span className="text-sm font-medium text-muted-foreground">
+                Semester:
+              </span>
               <select
                 value={selectedSemester}
                 onChange={(e) => setSelectedSemester(e.target.value)}
-                className="px-3 py-1.5 text-sm border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                className="px-3 py-1 text-sm border-0 rounded-lg bg-transparent text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 {semesterOptions.map((semester) => (
                   <option key={semester.id} value={semester.id}>
@@ -689,9 +643,9 @@ Download the full PDF to access all content and detailed explanations.
       {(searchQuery.trim() ||
         activeFilter !== "all" ||
         selectedSemester !== "current") && (
-        <div className="mb-4 p-3 bg-secondary/30 rounded-lg">
-          <p className="text-sm text-muted-foreground">
-            Showing materials for{" "}
+        <div className="mb-6 p-4 bg-info/10 border border-info/20 rounded-xl backdrop-blur-sm">
+          <p className="text-sm text-info font-medium">
+            📊 Showing materials for{" "}
             {selectedSemester === "current"
               ? "current semester"
               : selectedSemester}
@@ -702,336 +656,345 @@ Download the full PDF to access all content and detailed explanations.
         </div>
       )}
 
-      {/* Courses Section */}
-      <div className="space-y-6">
-        <div>
-          <div className="mb-6">
-            {searchedMaterialsOnDashboard.length > 0 && (
-              <div className="p-4 gap-4 text-white  flex bg-gray-900/10 rounded-lg flex-wrap items-center justify-center">
-                {searchedMaterialsOnDashboard.map((item, index) => (
-                  <div
-                    key={index}
-                    className="cursor-pointer border-border last:border-0 bg-gray-900 rounded-md flex-1 "
-                  >
-                    <button className="p-2 w-full">
-                      <div className="flex items-center justify-between">
-                        <h4 className="text-md font-semibold">
-                          {item.courseCode}
-                        </h4>
-                        <button
-                          onClick={() =>
-                            handleRemoveSearchedCourse(item.courseCode)
-                          }
-                          className="p-2 text-red-500 hover:bg-red-100 dark:hover:bg-red-900/20 rounded-md transition-colors"
-                          title="Remove Course"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                      <div className="flex">
-                        <p className="text-sm text-muted-foreground">
-                          {item.courseName} - {item.courseFullName}
-                        </p>
-                      </div>
+      {/* Selected Courses Bar */}
+      {searchedMaterialsOnDashboard.length > 0 && (
+        <div className="mb-8 p-6 bg-gradient-to-r from-chart-1/10 to-chart-2/10 rounded-xl border border-chart-1/20 backdrop-blur-sm">
+          <h3 className="text-lg font-semibold mb-4 text-chart-1">
+            📌 Quick Access Courses
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {searchedMaterialsOnDashboard.map((item, index) => (
+              <div
+                key={index}
+                className="group relative overflow-hidden bg-gradient-to-br from-card to-accent/20 border border-border rounded-xl p-4 shadow-md hover:shadow-lg transition-all transform hover:scale-105"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-chart-1/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="relative">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-semibold text-primary">
+                      {item.courseCode}
+                    </h4>
+                    <button
+                      onClick={() =>
+                        handleRemoveSearchedCourse(item.courseCode)
+                      }
+                      className="p-1 text-destructive hover:bg-destructive/10 rounded-md transition-colors"
+                      title="Remove Course"
+                    >
+                      <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
-                ))}
+                  <p className="text-sm text-muted-foreground">
+                    {item.courseName} - {item.courseFullName}
+                  </p>
+                </div>
               </div>
-            )}
+            ))}
           </div>
+        </div>
+      )}
 
-          <div className="grid gap-4">
-            {filteredCourses.map((course) => {
-              const semesterData = getCurrentSemesterContent(
-                course,
-                activeFilter
-              );
+      {/* Courses Section */}
+      <div className="space-y-8">
+        <div className="grid gap-6">
+          {filteredCourses.map((course) => {
+            const semesterData = getCurrentSemesterContent(
+              course,
+              activeFilter
+            );
 
-              const midContent = semesterData.content.filter(
-                (item: any) => item.phase === "mid"
-              );
+            const midContent = semesterData.content.filter(
+              (item: any) => item.phase === "mid"
+            );
 
-              const finalContent = semesterData.content.filter(
-                (item: any) => item.phase === "final"
-              );
+            const finalContent = semesterData.content.filter(
+              (item: any) => item.phase === "final"
+            );
 
-              const midMissing = semesterData.missing.filter(
-                (type: string) =>
-                  type.startsWith("mid") &&
-                  (activeFilter === "all" || type.endsWith(activeFilter))
-              );
+            const midMissing = semesterData.missing.filter(
+              (type: string) =>
+                type.startsWith("mid") &&
+                (activeFilter === "all" || type.endsWith(activeFilter))
+            );
 
-              const finalMissing = semesterData.missing.filter(
-                (type: string) =>
-                  type.startsWith("final") &&
-                  (activeFilter === "all" || type.endsWith(activeFilter))
-              );
+            const finalMissing = semesterData.missing.filter(
+              (type: string) =>
+                type.startsWith("final") &&
+                (activeFilter === "all" || type.endsWith(activeFilter))
+            );
 
-              return (
-                <div
-                  key={course.id}
-                  className="w-full border border-border rounded-lg bg-card text-card-foreground"
-                >
-                  <div className="p-6 pb-3">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <h3 className="text-lg font-semibold">
-                            {course.name}
-                          </h3>
-                          <span className="px-2 py-1 text-xs bg-secondary text-secondary-foreground rounded-md">
-                            {selectedSemester === "current"
-                              ? `${course.progress}% Complete`
-                              : "Archive"}
+            return (
+              <div
+                key={course.id}
+                className="group border border-border rounded-2xl bg-gradient-to-br from-card to-accent/10 shadow-lg hover:shadow-xl transition-all overflow-hidden"
+              >
+                <div className="p-6 bg-gradient-to-r from-primary/5 to-chart-1/5 border-b border-border">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="text-xl font-bold text-primary">
+                          {course.name}
+                        </h3>
+                        <span className="px-3 py-1 text-xs bg-gradient-to-r from-chart-1 to-chart-2 text-white rounded-full shadow-md">
+                          {selectedSemester === "current"
+                            ? `${course.progress}% Complete`
+                            : "Archive"}
+                        </span>
+                      </div>
+                      <p className="text-muted-foreground">{course.fullName}</p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <div className="text-right">
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <Users className="h-4 w-4 text-chart-1" />
+                          <span className="font-medium">
+                            {semesterData.content.length} shared items
                           </span>
                         </div>
-                        <p className="text-sm text-muted-foreground">
-                          {course.fullName}
-                        </p>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
+                          <TrendingUp className="h-4 w-4 text-chart-2" />
+                          <span>Active community</span>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <div className="text-right mr-4">
-                          <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                            <Users className="h-3 w-3" />
-                            <span>
-                              {semesterData.content.length} shared items
-                            </span>
-                          </div>
-                        </div>
-                        <button
-                          onClick={() =>
-                            handleAddCourseModal({
-                              courseCode: course.code,
-                              courseName: course.name,
-                              courseFullName: course.fullName,
-                            })
-                          }
-                          className="p-2 flex items-center gap-1 bg-green-100 text-primary hover:bg-primary/10 rounded-md transition-colors"
-                          title="Add Course"
-                        >
-                          <Plus className="h-4 w-4" />
-                          <span>Add</span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="p-6 pt-0 space-y-6">
-                    <div className="flex flex-col md:flex-row md:gap-6">
-                      {/* MID-TERM SECTION */}
-                      {(midContent.length > 0 || midMissing.length > 0) && (
-                        <div className="space-y-4 flex-1">
-                          <h4 className="text-md font-semibold text-foreground">
-                            Mid-term Materials
-                          </h4>
-
-                          {midContent.length > 0 && (
-                            <div>
-                              <div className="text-sm font-medium mb-2 flex items-center gap-2">
-                                Available Materials
-                                <span className="px-2 py-0.5 text-xs bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 rounded">
-                                  {midContent.length} items
-                                </span>
-                              </div>
-                              <div className="space-y-2 mt-5">
-                                {midContent.map((item: any, index: number) => {
-                                  const Icon = getIconForContentType(item.type);
-                                  return (
-                                    <div
-                                      key={index}
-                                      className="flex items-start gap-3 p-3 bg-secondary/30 rounded-lg hover:bg-secondary/50 transition-colors cursor-pointer"
-                                      onClick={() => handlePreview(item)}
-                                    >
-                                      <Icon className="h-4 w-4 text-muted-foreground mt-0.5" />
-                                      <div className="flex-1">
-                                        <div className="flex items-center justify-between">
-                                          <p className="text-sm font-medium">
-                                            {item.title}
-                                          </p>
-                                          <div className="flex items-center gap-3">
-                                            <button
-                                              onClick={(e) => {
-                                                e.stopPropagation();
-                                                handlePreview(item);
-                                              }}
-                                              className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors"
-                                            >
-                                              <Eye className="h-3 w-3" />
-                                              <span>{item.previews}</span>
-                                            </button>
-                                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                                              <Download className="h-3 w-3" />
-                                              <span>{item.downloads}</span>
-                                            </div>
-                                          </div>
-                                        </div>
-                                        <div className="flex items-center gap-2 mt-1">
-                                          <span className="inline-block px-2 py-0.5 text-xs bg-primary/10 text-primary rounded">
-                                            {item.type}
-                                          </span>
-                                          <span className="text-xs text-muted-foreground">
-                                            by {item.contributor}
-                                          </span>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            </div>
-                          )}
-
-                          {midMissing.length > 0 && (
-                            <div>
-                              <h5 className="text-sm font-medium mb-2 flex items-center gap-2">
-                                <AlertTriangle className="h-4 w-4 text-yellow-500" />
-                                Missing Mid-term Materials
-                                <span className="px-2 py-0.5 text-xs bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 rounded">
-                                  {midMissing.length} needed
-                                </span>
-                              </h5>
-                              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                                {midMissing.map((type: any) => {
-                                  const pureType = type.split("-")[1];
-                                  const Icon = getIconForContentType(pureType);
-                                  return (
-                                    <button
-                                      key={type}
-                                      onClick={() =>
-                                        handleUpload(course.name, type)
-                                      }
-                                      className="flex flex-col items-center gap-2 p-4 border-2 border-dashed border-border hover:bg-accent/50 rounded-lg transition-colors"
-                                    >
-                                      <Icon className="h-6 w-6 text-muted-foreground" />
-                                      <span className="text-xs font-medium">
-                                        Upload {pureType}
-                                      </span>
-                                      <Plus className="h-4 w-4 text-primary" />
-                                    </button>
-                                  );
-                                })}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      )}
-
-                      {/* FINAL-TERM SECTION */}
-                      {(finalContent.length > 0 || finalMissing.length > 0) && (
-                        <div className="space-y-4 flex-1">
-                          <h4 className="text-md font-semibold text-foreground">
-                            Final-term Materials
-                          </h4>
-
-                          {finalContent.length > 0 && (
-                            <div>
-                              <div className="text-sm font-medium mb-2 flex items-center gap-2">
-                                Available Materials
-                                <span className="px-2 py-0.5 text-xs bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 rounded">
-                                  {finalContent.length} items
-                                </span>
-                              </div>
-                              <div className="space-y-2">
-                                {finalContent.map(
-                                  (item: any, index: number) => {
-                                    const Icon = getIconForContentType(
-                                      item.type
-                                    );
-                                    return (
-                                      <div
-                                        key={index}
-                                        className="flex items-start gap-3 p-3 bg-secondary/30 rounded-lg hover:bg-secondary/50 transition-colors cursor-pointer"
-                                        onClick={() => handlePreview(item)}
-                                      >
-                                        <Icon className="h-4 w-4 text-muted-foreground mt-0.5" />
-                                        <div className="flex-1">
-                                          <div className="flex items-center justify-between">
-                                            <p className="text-sm font-medium">
-                                              {item.title}
-                                            </p>
-                                            <div className="flex items-center gap-3">
-                                              <button
-                                                onClick={(e) => {
-                                                  e.stopPropagation();
-                                                  handlePreview(item);
-                                                }}
-                                                className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors"
-                                              >
-                                                <Eye className="h-3 w-3" />
-                                                <span>{item.previews}</span>
-                                              </button>
-                                              <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                                                <Download className="h-3 w-3" />
-                                                <span>{item.downloads}</span>
-                                              </div>
-                                            </div>
-                                          </div>
-                                          <div className="flex items-center gap-2 mt-1">
-                                            <span className="inline-block px-2 py-0.5 text-xs bg-primary/10 text-primary rounded">
-                                              {item.type}
-                                            </span>
-                                            <span className="text-xs text-muted-foreground">
-                                              by {item.contributor}
-                                            </span>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    );
-                                  }
-                                )}
-                              </div>
-                            </div>
-                          )}
-
-                          {finalMissing.length > 0 && (
-                            <div>
-                              <h5 className="text-sm font-medium mb-2 flex items-center gap-2">
-                                <AlertTriangle className="h-4 w-4 text-yellow-500" />
-                                Missing Final-term Materials
-                                <span className="px-2 py-0.5 text-xs bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 rounded">
-                                  {finalMissing.length} needed
-                                </span>
-                              </h5>
-                              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                                {finalMissing.map((type: any) => {
-                                  const pureType = type.split("-")[1];
-                                  const Icon = getIconForContentType(pureType);
-                                  return (
-                                    <button
-                                      key={type}
-                                      onClick={() =>
-                                        handleUpload(course.name, type)
-                                      }
-                                      className="flex flex-col items-center gap-2 p-4 border-2 border-dashed border-border hover:bg-accent/50 rounded-lg transition-colors"
-                                    >
-                                      <Icon className="h-6 w-6 text-muted-foreground" />
-                                      <span className="text-xs font-medium">
-                                        Upload {pureType}
-                                      </span>
-                                      <Plus className="h-4 w-4 text-primary" />
-                                    </button>
-                                  );
-                                })}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      )}
+                      <button
+                        onClick={() =>
+                          handleAddCourseModal({
+                            courseCode: course.code,
+                            courseName: course.name,
+                            courseFullName: course.fullName,
+                          })
+                        }
+                        className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-success to-chart-4 text-white hover:shadow-lg rounded-xl transition-all transform hover:scale-105"
+                        title="Add to Dashboard"
+                      >
+                        <Plus className="h-4 w-4" />
+                        <span>Add</span>
+                      </button>
                     </div>
                   </div>
                 </div>
-              );
-            })}
-          </div>
+
+                <div className="p-6 space-y-8">
+                  <div className="grid md:grid-cols-2 gap-8">
+                    {/* MID-TERM SECTION */}
+                    {(midContent.length > 0 || midMissing.length > 0) && (
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className="w-1 h-8 bg-gradient-to-b from-mid-primary to-mid-accent rounded-full"></div>
+                          <h4 className="text-lg font-bold text-mid-primary">
+                            🔵 Mid-term Materials
+                          </h4>
+                        </div>
+
+                        {midContent.length > 0 && (
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-2 mb-3">
+                              <span className="text-sm font-medium text-mid-primary">
+                                Available Materials
+                              </span>
+                              <span className="px-2 py-1 text-xs bg-success text-success-foreground rounded-full">
+                                {midContent.length} items
+                              </span>
+                            </div>
+                            <div className="space-y-3">
+                              {midContent.map((item: any, index: number) => {
+                                const Icon = getIconForContentType(item.type);
+                                return (
+                                  <div
+                                    key={index}
+                                    className="group/item flex items-start gap-3 p-4 bg-gradient-to-r from-mid-muted to-mid-accent/30 rounded-xl hover:shadow-md transition-all cursor-pointer border border-mid-border"
+                                    onClick={() => handlePreview(item)}
+                                  >
+                                    <Icon className="h-5 w-5 text-mid-primary mt-0.5" />
+                                    <div className="flex-1">
+                                      <div className="flex items-center justify-between">
+                                        <p className="font-medium text-mid-primary group-hover/item:text-mid-primary">
+                                          {item.title}
+                                        </p>
+                                        <div className="flex items-center gap-3">
+                                          <button
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              handlePreview(item);
+                                            }}
+                                            className="flex items-center gap-1 text-xs text-mid-primary hover:text-mid-primary/80 transition-colors"
+                                          >
+                                            <Eye className="h-3 w-3" />
+                                            <span>{item.previews}</span>
+                                          </button>
+                                          <div className="flex items-center gap-1 text-xs text-mid-primary">
+                                            <Download className="h-3 w-3" />
+                                            <span>{item.downloads}</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div className="flex items-center gap-2 mt-2">
+                                        <span className="inline-block px-2 py-1 text-xs bg-mid-primary text-mid-primary-foreground rounded-md">
+                                          {item.type}
+                                        </span>
+                                        <span className="text-xs text-muted-foreground">
+                                          by {item.contributor}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+
+                        {midMissing.length > 0 && (
+                          <div>
+                            <h5 className="text-sm font-medium mb-3 flex items-center gap-2 text-warning">
+                              <AlertTriangle className="h-4 w-4" />
+                              Missing Mid-term Materials
+                              <span className="px-2 py-1 text-xs bg-warning text-warning-foreground rounded-full">
+                                {midMissing.length} needed
+                              </span>
+                            </h5>
+                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+                              {midMissing.map((type: any) => {
+                                const pureType = type.split("-")[1];
+                                const Icon = getIconForContentType(pureType);
+                                return (
+                                  <button
+                                    key={type}
+                                    onClick={() =>
+                                      handleUpload(course.name, type)
+                                    }
+                                    className="group flex flex-col items-center gap-2 p-4 border-2 border-dashed border-mid-border hover:bg-mid-muted/50 rounded-xl transition-all transform hover:scale-105"
+                                  >
+                                    <Icon className="h-6 w-6 text-mid-primary group-hover:text-mid-primary" />
+                                    <span className="text-xs font-medium text-mid-primary">
+                                      Upload {pureType}
+                                    </span>
+                                    <Plus className="h-4 w-4 text-mid-primary" />
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* FINAL-TERM SECTION */}
+                    {(finalContent.length > 0 || finalMissing.length > 0) && (
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className="w-1 h-8 bg-gradient-to-b from-final-primary to-final-accent rounded-full"></div>
+                          <h4 className="text-lg font-bold text-final-primary">
+                            🟣 Final-term Materials
+                          </h4>
+                        </div>
+
+                        {finalContent.length > 0 && (
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-2 mb-3">
+                              <span className="text-sm font-medium text-final-primary">
+                                Available Materials
+                              </span>
+                              <span className="px-2 py-1 text-xs bg-success text-success-foreground rounded-full">
+                                {finalContent.length} items
+                              </span>
+                            </div>
+                            <div className="space-y-3">
+                              {finalContent.map((item: any, index: number) => {
+                                const Icon = getIconForContentType(item.type);
+                                return (
+                                  <div
+                                    key={index}
+                                    className="group/item flex items-start gap-3 p-4 bg-gradient-to-r from-final-muted to-final-accent/30 rounded-xl hover:shadow-md transition-all cursor-pointer border border-final-border"
+                                    onClick={() => handlePreview(item)}
+                                  >
+                                    <Icon className="h-5 w-5 text-final-primary mt-0.5" />
+                                    <div className="flex-1">
+                                      <div className="flex items-center justify-between">
+                                        <p className="font-medium text-final-primary group-hover/item:text-final-primary">
+                                          {item.title}
+                                        </p>
+                                        <div className="flex items-center gap-3">
+                                          <button
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              handlePreview(item);
+                                            }}
+                                            className="flex items-center gap-1 text-xs text-final-primary hover:text-final-primary/80 transition-colors"
+                                          >
+                                            <Eye className="h-3 w-3" />
+                                            <span>{item.previews}</span>
+                                          </button>
+                                          <div className="flex items-center gap-1 text-xs text-final-primary">
+                                            <Download className="h-3 w-3" />
+                                            <span>{item.downloads}</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div className="flex items-center gap-2 mt-2">
+                                        <span className="inline-block px-2 py-1 text-xs bg-final-primary text-final-primary-foreground rounded-md">
+                                          {item.type}
+                                        </span>
+                                        <span className="text-xs text-muted-foreground">
+                                          by {item.contributor}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+
+                        {finalMissing.length > 0 && (
+                          <div>
+                            <h5 className="text-sm font-medium mb-3 flex items-center gap-2 text-warning">
+                              <AlertTriangle className="h-4 w-4" />
+                              Missing Final-term Materials
+                              <span className="px-2 py-1 text-xs bg-warning text-warning-foreground rounded-full">
+                                {finalMissing.length} needed
+                              </span>
+                            </h5>
+                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+                              {finalMissing.map((type: any) => {
+                                const pureType = type.split("-")[1];
+                                const Icon = getIconForContentType(pureType);
+                                return (
+                                  <button
+                                    key={type}
+                                    onClick={() =>
+                                      handleUpload(course.name, type)
+                                    }
+                                    className="group flex flex-col items-center gap-2 p-4 border-2 border-dashed border-final-border hover:bg-final-muted/50 rounded-xl transition-all transform hover:scale-105"
+                                  >
+                                    <Icon className="h-6 w-6 text-final-primary group-hover:text-final-primary" />
+                                    <span className="text-xs font-medium text-final-primary">
+                                      Upload {pureType}
+                                    </span>
+                                    <Plus className="h-4 w-4 text-final-primary" />
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
       {/* Upload Modal */}
       {showUploadModal && (
-        <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50">
-          <div className="bg-card p-6 rounded-lg border border-border w-full max-w-md">
-            <h3 className="text-lg font-semibold mb-4">
-              Upload {uploadType} for Course {uploadCourse}
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 backdrop-blur-sm">
+          <div className="bg-card p-6 rounded-2xl border border-border w-full max-w-lg shadow-2xl">
+            <h3 className="text-xl font-bold mb-4 text-primary">
+              📤 Upload {uploadType} for {uploadCourse}
             </h3>
             <div className="space-y-4">
               <div>
@@ -1039,7 +1002,7 @@ Download the full PDF to access all content and detailed explanations.
                 <input
                   type="text"
                   placeholder={`Enter ${uploadType} title...`}
-                  className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="w-full px-4 py-3 border border-input rounded-xl bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
               <div>
@@ -1049,26 +1012,26 @@ Download the full PDF to access all content and detailed explanations.
                 <textarea
                   placeholder="Describe the content..."
                   rows={3}
-                  className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="w-full px-4 py-3 border border-input rounded-xl bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
-              <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
-                <Upload className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                <p className="text-sm text-muted-foreground">
+              <div className="border-2 border-dashed border-primary/50 rounded-xl p-8 text-center bg-primary/5">
+                <Upload className="h-8 w-8 text-primary mx-auto mb-3" />
+                <p className="text-sm text-primary font-medium">
                   Drop files here or click to browse
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
                   PDF, DOC, TXT files accepted
                 </p>
               </div>
-              <div className="flex gap-2 justify-end">
+              <div className="flex gap-3 justify-end pt-2">
                 <button
                   onClick={() => setShowUploadModal(false)}
-                  className="px-4 py-2 text-sm border border-border rounded-md hover:bg-accent transition-colors"
+                  className="px-6 py-2 text-sm border border-border rounded-xl hover:bg-accent transition-colors"
                 >
                   Cancel
                 </button>
-                <button className="px-4 py-2 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors">
+                <button className="px-6 py-2 text-sm bg-gradient-to-r from-primary to-chart-1 text-white rounded-xl hover:shadow-lg transition-all">
                   Upload & Share
                 </button>
               </div>
@@ -1079,38 +1042,44 @@ Download the full PDF to access all content and detailed explanations.
 
       {/* PDF Preview Modal */}
       {showPreviewModal && previewMaterial && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-          <div className="bg-card rounded-lg border border-border w-full max-w-4xl h-full max-h-[90vh] flex flex-col">
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+          <div className="bg-card rounded-2xl border border-border w-full max-w-5xl h-full max-h-[90vh] flex flex-col shadow-2xl">
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-border">
+            <div className="flex items-center justify-between p-6 border-b border-border bg-gradient-to-r from-primary/5 to-chart-1/5">
               <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                   {(() => {
                     const Icon = getIconForContentType(previewMaterial.type);
-                    return <Icon className="h-5 w-5 text-primary" />;
+                    return <Icon className="h-6 w-6 text-primary" />;
                   })()}
                   <div>
-                    <h3 className="font-semibold">{previewMaterial.title}</h3>
+                    <h3 className="text-lg font-bold text-primary">
+                      {previewMaterial.title}
+                    </h3>
                     <p className="text-sm text-muted-foreground">
                       by {previewMaterial.contributor}
                     </p>
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                  <div className="flex items-center gap-1">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 text-sm">
+                  <div className="flex items-center gap-1 text-chart-1">
                     <Eye className="h-4 w-4" />
-                    <span>{previewMaterial.previews}</span>
+                    <span className="font-medium">
+                      {previewMaterial.previews}
+                    </span>
                   </div>
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1 text-chart-2">
                     <Download className="h-4 w-4" />
-                    <span>{previewMaterial.downloads}</span>
+                    <span className="font-medium">
+                      {previewMaterial.downloads}
+                    </span>
                   </div>
                 </div>
                 <button
                   onClick={() => setShowPreviewModal(false)}
-                  className="p-2 hover:bg-accent rounded-md transition-colors"
+                  className="p-2 hover:bg-accent rounded-xl transition-colors"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -1119,8 +1088,8 @@ Download the full PDF to access all content and detailed explanations.
 
             {/* PDF Content */}
             <div className="flex-1 overflow-hidden">
-              <div className="h-full bg-secondary/30 rounded-b-lg overflow-auto">
-                <div className="max-w-4xl mx-auto bg-card shadow-lg min-h-full">
+              <div className="h-full bg-gradient-to-br from-secondary/30 to-accent/30 rounded-b-2xl overflow-auto">
+                <div className="max-w-4xl mx-auto bg-card shadow-xl min-h-full m-4 rounded-xl">
                   <div className="p-8">
                     <div className="prose dark:prose-invert max-w-none">
                       <pre className="whitespace-pre-wrap font-mono text-sm leading-relaxed">
@@ -1133,12 +1102,12 @@ Download the full PDF to access all content and detailed explanations.
             </div>
 
             {/* Footer */}
-            <div className="p-4 border-t border-border bg-secondary/20">
+            <div className="p-6 border-t border-border bg-gradient-to-r from-secondary/20 to-accent/20">
               <div className="flex items-center justify-between">
                 <p className="text-sm text-muted-foreground">
-                  Preview • Click outside or press ESC to close
+                  📖 Preview • Press ESC to close
                 </p>
-                <button className="px-4 py-2 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors flex items-center gap-2">
+                <button className="flex items-center gap-2 px-6 py-2 text-sm bg-gradient-to-r from-success to-chart-4 text-white rounded-xl hover:shadow-lg transition-all">
                   <Download className="h-4 w-4" />
                   Download Full PDF
                 </button>
